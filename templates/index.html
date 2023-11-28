@@ -6,74 +6,82 @@
     <title>출결관리 프로그램</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
-        }
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
 
-        #header {
-            text-align: center;
-            background-color: #333;
-            color: #fff;
-            padding: 15px;
-        }
+#header {
+    text-align: center;
+    background-color: #333;
+    color: #fff;
+    padding: 15px;
+}
 
-        #container {
-            max-width: 400px;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+#container {
+    max-width: 400px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
-        form {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-        }
+form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
 
-        label {
-            margin-bottom: 5px;
-        }
+label {
+    margin-bottom: 5px;
+}
 
-        input {
-            padding: 10px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-        }
+input {
+    padding: 10px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
 
-        input[type="submit"] {
-            background-color: #333;
-            color: #fff;
-            cursor: pointer;
-        }
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+}
 
-        #webcam-container {
-            margin-top: 20px;
-            width: 100%;
-            height: 250px;
-            border: 5px #333 solid;
-            border-radius: 5px;
-            overflow: hidden;
-        }
+input[type="submit"] {
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+    width: 100%;
+}
 
-        #videoElement {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+#webcam-container {
+    margin-top: 20px;
+    width: 100%;
+    height: 250px;
+    border: 5px #333 solid;
+    border-radius: 5px;
+    overflow: hidden;
+}
 
-        button {
-            margin-top: 15px;
-            padding: 10px;
-            background-color: #333;
-            color: #fff;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-        }
+#videoElement {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+}
+
     </style>
 </head>
 <body>
@@ -88,8 +96,9 @@
             <label for="password">Password:</label>
             <input type="password" id="password" name="password">
             <button onclick="takeSnapshot()">로그인</button><br>
-            <input type="submit" value="회원가입">
         </form>
+        <button onclick="location.href='/signup'">회원가입</button>
+        <button onclick="location.href='/leave'">퇴근하기</button>
 
         <div id="webcam-container">
             <video autoplay="true" id="videoElement"></video>
@@ -97,38 +106,49 @@
     </div>
 
     <script>
-        var video = document.querySelector("#videoElement")
+      var video = document.querySelector("#videoElement")
 
-        if (navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(function (stream) {
-                    video.srcObject = stream;
-                })
-                .catch(function (error) {
-                    console.log("다시 확인하세요!")
-                });
-        }
+      if (navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices.getUserMedia({ video: true })
+              .then(function (stream) {
+                  video.srcObject = stream;
+              })
+              .catch(function (error) {
+                  console.log("다시 확인하세요!")
+              });
+      }
 
-        function takeSnapshot() {
-            var canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            var ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      function takeSnapshot() {
+        var canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            var dataURL = canvas.toDataURL('image/png');
+        var dataURL = canvas.toDataURL('image/png');
 
-            fetch('/upload', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ image: dataURL }),
-            })
-                .then(response => response.json())
-                .then(data => console.log('Success:', data))
-                .catch(error => console.error('Error:', error));
-        }
+        fetch('/uploads', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ image: dataURL }),
+        })
+        .then(data => {
+    console.log('Success:', data);
+    // 로그인 성공 또는 실패에 상관없이 알림 표시
+    alert('로그인이 성공하였습니다.');
+})
+.catch(error => {
+    console.error('Error:', error);
+    // 오류 발생 시 알림 표시
+    alert('로그인이 실패하였습니다.');
+})
+.finally(() => {
+    console.log('Finally block executed.');
+});
+      }
+      
     </script>
 </body>
 </html>

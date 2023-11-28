@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 DB_URL = 'sqlite:///a_m.sqlite3'
+DB_URL = 'sqlite:///a_m.sqlite1'
 
 # 데이터베이스에 연결하는 엔진을 생성하는 함수
 engine = create_engine(DB_URL, connect_args={'check_same_thread': False})
