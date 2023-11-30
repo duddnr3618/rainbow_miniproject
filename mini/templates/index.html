@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>웹캠 이미지 캡쳐 회원가입</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <style>
+            body {
+                font-family: 'Noto Sans KR', sans-serif;
+            }
+            .fa {
+                font-size: 24px;
+                margin-right: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container mt-5">
+            <h1 class="text-center mb-5"><i class="fa fa-camera" aria-hidden="true"></i>출퇴그니</h1>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <video id="video" autoplay class="w-100"></video>
+                    <canvas id="canvas" style="display: none;"></canvas>
+                    <div class="text-center mt-3">
+                        <button id="captureBtn" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal"><i class="fa fa-picture-o" aria-hidden="true"></i>회원가입</button>
+                    </div>
+                </div>
+                <div class="col-md-8 mt-5">
+                    <form id="webcamForm">
+                        <div class="form-group">
+                            <label for="webcamName">회원 이름:</label>
+                            <input type="text" id="webcamName" name="webcamName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneNumber">전화번호:</label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber" pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" class="form-control" required>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button id="submitBtn" class="btn btn-success btn-lg"><i class="fa fa-sign-in" aria-hidden="true"></i> 로그인</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="container">
+            <form action="/leave">
+                <button>퇴근하기</button>
+            </form>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">반갑습니다~!</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <img id="capturedImage" style="max-width: 100%;">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                var video = document.getElementById('video');
+                video.srcObject = stream;
+            })
+            .catch(function(err) {
+                console.error('웹캠을 사용할 수 없습니다.', err);
+            });
+
+        document.getElementById('captureBtn').addEventListener('click', function() {
+            var video = document.getElementById('video');
+            var canvas = document.getElementById('canvas');
+            var capturedImage = document.getElementById('capturedImage');
+            
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            var imgData = canvas.toDataURL('image/jpg');
+            capturedImage.src = imgData;
+            capturedImage.style.display = 'block';
+            document.getElementById('webcamName').disabled = true;
+            document.getElementById('phoneNumber').disabled = true;
+            // Show the submit button
+            capturedName = document.getElementById('webcamName').value;
+            capturedPhoneNumber = document.getElementById('phoneNumber').value;
+
+            // Display captured values in the modal
+            document.getElementById('capturedName').innerText = capturedName;
+            document.getElementById('capturedPhoneNumber').innerText = capturedPhoneNumber;
+            document.getElementById('captureBtn').style.display = 'block';
+        });
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+            var video = document.getElementById('video');
+            video.srcObject = stream;
+        })
+        .catch(function(err) {
+            console.error('웹캠을 사용할 수 없습니다.', err);
+        });
+
+    document.getElementById('captureBtn').addEventListener('click', function() {
+        var video = document.getElementById('video');
+        var canvas = document.getElementById('canvas');
+        var capturedImage = document.getElementById('capturedImage');
+        
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        var imgData = canvas.toDataURL('image/jpg');
+        capturedImage.src = imgData;
+        capturedImage.style.display = 'block';
+
+        // Show the submit button
+        document.getElementById('captureBtn').style.display = 'block';
+    });
+
+    document.getElementById('captureBtn').addEventListener('click', function() {
+        // 폼 데이터 가져오기
+        var webcamName = document.getElementById('webcamName').value;
+        var phoneNumber = document.getElementById('phoneNumber').value;
+        
+        var capturedImage = document.getElementById('capturedImage');
+        var canvas = document.getElementById('canvas');
+        
+        canvas.getContext('2d').drawImage(capturedImage, 0, 0, canvas.width, canvas.height);
+        
+        var imgData = canvas.toDataURL('image/jpg');
+        var blobData = dataURItoBlob(imgData);
+        
+        var formData = new FormData();
+        formData.append('file', blobData, 'captured_image.jpg');
+        formData.append('webcamName', webcamName);
+        formData.append('phoneNumber', phoneNumber);
+        
+        // /upload 엔드포인트로의 요청
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(uploadData => {
+            alert('파일이 성공적으로 업로드되었습니다.', uploadData);
+    
+            // /predict/img2 엔드포인트로의 요청
+            fetch('/predict/img2', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(predictData => {
+
+                // 여기에서 예측 결과에 대한 추가 처리를 할 수 있습니다.
+    
+                // /login 엔드포인트로의 요청
+                fetch('/login', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(loginResponse => loginResponse.json())
+                .then(loginData => {
+                    alert(loginData);
+                    // 여기에서 로그인 결과에 대한 추가 처리를 할 수 있습니다.
+                })
+                .catch(loginError => {
+                    alert('로그인 중 오류 발생:', loginError);
+                });
+            })
+            .catch(predictError => {
+                alert('이미지 예측 중 오류 발생:', predictError);
+            });
+        })
+        .catch(uploadError => {
+            alert('파일 업로드 중 오류 발생:', uploadError);
+        });
+    });
+
+
+    document.getElementById('submitBtn').addEventListener('click', function() {
+        var video = document.getElementById('video');
+        var canvas = document.getElementById('canvas');
+        var capturedImage = document.getElementById('capturedImage');
+        
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        var imgData = canvas.toDataURL('image/jpg');
+        capturedImage.src = imgData;
+        capturedImage.style.display = 'block';
+
+        // Show the submit button
+        document.getElementById('submitBtn').style.display = 'block';
+    });
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function(stream) {
+        var video = document.getElementById('video');
+        video.srcObject = stream;
+    })
+    .catch(function(err) {
+        alert('웹캠을 사용할 수 없습니다.', err);
+    });
+
+
+
+    
+document.getElementById('submitBtn').addEventListener('click', function() {
+    var video = document.getElementById('video');
+    var canvas = document.getElementById('canvas');
+    var capturedImage = document.getElementById('capturedImage');
+    
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    var imgData = canvas.toDataURL('image/jpg');
+    capturedImage.src = imgData;
+    capturedImage.style.display = 'block';
+
+    // Show the submit button
+    document.getElementById('submitBtn').style.display = 'block';
+});
+
+document.getElementById('submitBtn').addEventListener('click', function() {
+    // 폼 데이터 가져오기
+    var webcamName = document.getElementById('webcamName').value;
+    var phoneNumber = document.getElementById('phoneNumber').value;
+    
+    var capturedImage = document.getElementById('capturedImage');
+    var canvas = document.getElementById('canvas');
+    
+    canvas.getContext('2d').drawImage(capturedImage, 0, 0, canvas.width, canvas.height);
+    
+    var imgData = canvas.toDataURL('image/jpg');
+    var blobData = dataURItoBlob(imgData);
+    
+    var formData = new FormData();
+    formData.append('file', blobData, 'captured_image.jpg');
+    formData.append('webcamName', webcamName);
+    formData.append('phoneNumber', phoneNumber);
+    
+    fetch('/login', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json(); // or response.text() if the server response is not JSON
+    })
+    .then(data => {
+        // Handle the successful response dataURItoBlob
+        alert(data);
+    })
+    .catch(error => {
+        // Handle errors during the fetch
+        alert('다시로그인 해주세요:', error);
+    });
+});
+
+
+
+// 데이터 URL을 Blob으로 변환하는 함수
+function dataURItoBlob(dataURI) {
+    var byteString = atob(dataURI.split(',')[1]);
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
+}
+
+
+    function dataURItoBlob(dataURI) {
+        var byteString = atob(dataURI.split(',')[1]);
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+        var ab = new ArrayBuffer(byteString.length);
+        var ia = new Uint8Array(ab);
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([ab], { type: mimeString });
+    }
+
+        function dataURItoBlob(dataURI) {
+            var byteString = atob(dataURI.split(',')[1]);
+            var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+            var ab = new ArrayBuffer(byteString.length);
+            var ia = new Uint8Array(ab);
+            for (var i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ab], { type: mimeString });
+        }
+    </script>
+</body>
+</html>
